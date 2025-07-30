@@ -1,0 +1,73 @@
+{% extends 'quiz_app/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Take Quiz - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">{{ quiz.title }}</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Difficulty:</strong> 
+                                <span class="badge bg-{{ quiz.difficulty|lower }}">{{ quiz.difficulty|title }}</span>
+                            </p>
+                            <p><strong>Total Questions:</strong> {{ questions|length }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Your Attempt:</strong> {{ next_attempt_number }}
+                                {% if max_attempts > 0 %}
+                                    of {{ max_attempts }}
+                                {% else %}
+                                    (Unlimited attempts)
+                                {% endif %}
+                            </p>
+                            {% if attempt_count > 0 %}
+                                <p><strong>Previous Attempts:</strong> {{ attempt_count }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <form method="post" action="{% url 'submit_quiz' quiz.id %}" class="needs-validation" novalidate>
+        {% csrf_token %}
+        
+        {% for question in questions %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Question {{ forloop.counter }}</h5>
+                <p class="card-text">{{ question.text }}</p>
+                
+                <div class="form-group">
+                    {% for choice in question.shuffled_choices %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" 
+                               name="question_{{ question.id }}" 
+                               id="choice_{{ choice.id }}" 
+                               value="{{ choice.id }}" required>
+                        <label class="form-check-label" for="choice_{{ choice.id }}">
+                            {{ choice.text }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-paper-plane me-2"></i>Submit Quiz
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %} 

@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtual environment
+venv/
+
+# Django stuff
+*.log
+db.sqlite3
+media/
+static/
+.env
+
+
+# Ignore Django settings and migrations
+quiz_project/settings.py
+quiz_app/migrations/
+final.py
+# VSCode and IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db 

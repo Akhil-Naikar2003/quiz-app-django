@@ -1,0 +1,147 @@
+{% extends 'quiz_app/base.html' %}
+
+{% block title %}Quiz Results{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">{% if quiz %}{{ quiz.title }} - Results{% else %}Quiz Results{% endif %}</h2>
+            <div class="d-flex gap-2">
+                {% if quiz and quiz.creator == user %}
+                    <a href="{% url 'delete_quiz' quiz.id %}" class="btn btn-outline-danger" 
+                       onclick="return confirm('Are you sure you want to delete this quiz? This action cannot be undone.')">
+                        <i class="fas fa-trash"></i> Delete Quiz
+                    </a>
+                {% endif %}
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-light">Back to Dashboard</a>
+            </div>
+        </div>
+        <div class="card-body">
+            {% if show_quiz_selection %}
+                <h4 class="mb-4">Select a Quiz to View Results</h4>
+                {% if attempted_quizzes %}
+                    <div class="list-group">
+                        {% for quiz in attempted_quizzes %}
+                            <a href="{% url 'quiz_results_detail' quiz.id %}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ quiz.title }}</h5>
+                                    <small>{{ quiz.created_at|date:"M d, Y" }}</small>
+                                </div>
+                                <p class="mb-1">{{ quiz.description }}</p>
+                                <small class="text-muted">
+                                    <span class="badge bg-{{ quiz.difficulty|lower }}">{{ quiz.difficulty }}</span>
+                                </small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-circle me-2"></i>You haven't attempted any quizzes yet.
+                    </div>
+                {% endif %}
+            {% else %}
+                {% if quiz %}
+                    <div class="mb-4">
+                        <h4>Your Latest Score</h4>
+                        <div class="alert {% if percentage >= 80 %}alert-success{% elif percentage >= 60 %}alert-warning{% else %}alert-danger{% endif %}">
+                            <h4 class="alert-heading">Score: {{ score }} out of {{ total_questions }}</h4>
+                            <p class="mb-0">Percentage: {{ percentage|floatformat:2 }}%</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4>All Your Attempts</h4>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Attempt #</th>
+                                        <th>Date</th>
+                                        <th>Score</th>
+                                        <th>Percentage</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for attempt in attempts %}
+                                        <tr {% if attempt == selected_attempt %}class="table-active"{% endif %}>
+                                            <td>{{ forloop.revcounter }}</td>
+                                            <td>{{ attempt.completed_at|date:"M d, Y H:i" }}</td>
+                                            <td>{{ attempt.score }}/{{ attempt.total_questions }}</td>
+                                            <td>
+                                                <span class="badge 
+                                                    {% if attempt.percentage == 100 %}
+                                                        bg-success
+                                                    {% elif attempt.percentage >= 60 %}
+                                                        bg-warning
+                                                    {% else %}
+                                                        bg-danger
+                                                    {% endif %}">
+                                                    {{ attempt.percentage|floatformat:2 }}%
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="?attempt={{ attempt.id }}" class="btn btn-sm {% if attempt == selected_attempt %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                                                    View Details
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {% if user.is_authenticated and user.profile %}
+                        <div class="alert alert-info mb-4">
+                            <strong>Your Points:</strong> {{ user.profile.points }}<br>
+                            <strong>Your Badges:</strong>
+                            {% with badges=user.profile.badges|default_if_none:"" %}
+                                {% if badges %}
+                                    {% for badge in badges %}
+                                        <span class="badge bg-warning text-dark">{{ badge }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    None yet
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    {% endif %}
+
+                    {% if selected_attempt %}
+                        <div class="mb-4">
+                            <h4>Question Review - Attempt #{{ selected_attempt.id }}</h4>
+                            <div class="list-group">
+                                {% for answer in user_answers %}
+                                    <div class="list-group-item">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">Question {{ forloop.counter }}</h6>
+                                        </div>
+                                        <p class="mb-1"><strong>Q:</strong> {{ answer.question.text }}</p>
+                                        <p class="mb-1"><strong>Your Answer:</strong> 
+                                            {% if answer.selected_choice %}
+                                                {{ answer.selected_choice.text }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        </p>
+                                        <p class="mb-1">
+                                            {% if answer.selected_choice and answer.selected_choice.is_correct %}
+                                                <span class="text-success"><strong>Correct!</strong></span>
+                                            {% else %}
+                                                <span class="text-danger"><strong>Incorrect</strong></span>
+                                            {% endif %}
+                                        </p>
+                                        <p class="mb-1"><strong>Correct Answer:</strong> {{ answer.question.correct_choice.text }}</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

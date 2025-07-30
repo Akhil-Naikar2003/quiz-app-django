@@ -1,0 +1,55 @@
+{% extends 'quiz_app/base.html' %}
+
+{% block title %}Quiz Results - Quiz App{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Quiz Results</h2>
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">{{ quiz.title }}</h3>
+            <p class="card-text">{{ quiz.description }}</p>
+            
+            <div class="alert {% if score == total_questions %}alert-success{% else %}alert-info{% endif %}">
+                <h4 class="alert-heading">Your Score</h4>
+                <p>You scored {{ score }} out of {{ total_questions }} questions correctly.</p>
+                <p>Percentage: {{ percentage|floatformat:2  }}%</p>
+            </div>
+
+            <h4 class="mt-4">Question Review</h4>
+            {% for answer in user_answers %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Question {{ forloop.counter }}</h5>
+                    <p class="card-text">{{ answer.question.text }}</p>
+                    
+                    <div class="mt-3">
+                        <p><strong>Your Answer:</strong> {{ answer.selected_choice.text }}</p>
+                        <p class="{% if answer.selected_choice.is_correct %}text-success{% else %}text-danger{% endif %}">
+                            <strong>{% if answer.selected_choice.is_correct %}Correct!{% else %}Incorrect{% endif %}</strong>
+                        </p>
+                        
+                        {% if not answer.selected_choice.is_correct %}
+                        <p class="text-success">
+                            <strong>Correct Answer:</strong> 
+                            {% for choice in answer.question.choices.all %}
+                                {% if choice.is_correct %}
+                                    {{ choice.text }}
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <div class="mt-4">
+                <a href="{% url 'home' %}" class="btn btn-primary">Back to Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

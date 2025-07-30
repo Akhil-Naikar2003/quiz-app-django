@@ -1,0 +1,92 @@
+{% extends 'quiz_app/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Create New Quiz</h2>
+    
+    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Quiz Type</h5>
+                <div class="form-check form-check-inline">
+                    {{ form.quiz_type }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Common fields that are always present -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Quiz Settings</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form.number_of_questions|as_crispy_field }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.difficulty|as_crispy_field }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="pdf-section" class="quiz-section">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">PDF Upload</h5>
+                    <div class="mb-3">
+                        {{ form.pdf_file|as_crispy_field }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="api-section" class="quiz-section" style="display: none;">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">API Configuration</h5>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form.category|as_crispy_field }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Create Quiz</button>
+        </div>
+    </form>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const quizTypeRadios = document.querySelectorAll('input[name="quiz_type"]');
+    const pdfSection = document.getElementById('pdf-section');
+    const apiSection = document.getElementById('api-section');
+
+    function updateSections() {
+        const selectedType = document.querySelector('input[name="quiz_type"]:checked').value;
+        if (selectedType === 'pdf') {
+            pdfSection.style.display = 'block';
+            apiSection.style.display = 'none';
+        } else {
+            pdfSection.style.display = 'none';
+            apiSection.style.display = 'block';
+        }
+    }
+
+    quizTypeRadios.forEach(radio => {
+        radio.addEventListener('change', updateSections);
+    });
+
+    // Initial update
+    updateSections();
+});
+</script>
+{% endblock %}
+{% endblock %} 

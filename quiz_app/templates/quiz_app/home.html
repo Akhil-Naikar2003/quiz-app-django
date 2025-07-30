@@ -1,0 +1,59 @@
+{% extends 'quiz_app/base.html' %}
+
+{% block title %}Home - Quiz App{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    {% if user.is_authenticated %}
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Welcome, {{ user.username }}!</h1>
+            <div>
+                <a href="{% url 'create_quiz' %}" class="btn btn-primary">Create New Quiz</a>
+                <a href="{% url 'logout' %}" class="btn btn-outline-danger">Logout</a>
+            </div>
+        </div>
+        {% if quizzes %}
+            <h3>Your Quizzes</h3>
+            <div class="row">
+                {% for quiz in quizzes %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ quiz.title }}</h5>
+                            <p class="card-text">{{ quiz.description }}</p>
+                            <div class="badge bg-info mb-2">Difficulty: {{ quiz.difficulty }}</div>
+                            <div class="d-grid">
+                                <a href="{% url 'take_quiz' quiz.id %}" class="btn btn-primary">Take Quiz</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <p>You haven't created any quizzes yet. Click the "Create New Quiz" button to get started!</p>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="text-center">
+            <h1>Welcome to the Quiz App</h1>
+            <p class="lead mb-4">Create and take quizzes to test your knowledge!</p>
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Get Started</h5>
+                            <p class="card-text">Please login or register to create and take quizzes.</p>
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+                                <a href="{% url 'register' %}" class="btn btn-success">Register</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

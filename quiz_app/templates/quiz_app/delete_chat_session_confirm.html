@@ -1,0 +1,73 @@
+{% extends 'quiz_app/base.html' %}
+
+{% block title %}Delete Chat Session - {{ session.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Delete Chat Session
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Warning!
+                        </h5>
+                        <p class="mb-0">
+                            You are about to delete the chat session "<strong>{{ session.title }}</strong>". 
+                            This action cannot be undone and will permanently remove:
+                        </p>
+                        <ul class="mt-2 mb-0">
+                            <li>All messages in this chat session</li>
+                            <li>Chat history and conversation context</li>
+                            <li>Session metadata and timestamps</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5>Session Details:</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Title:</strong> {{ session.title }}</p>
+                                    <p><strong>Created:</strong> {{ session.created_at|date:"F j, Y" }}</p>
+                                    <p><strong>Status:</strong> 
+                                        <span class="badge {% if session.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {% if session.is_active %}Active{% else %}Inactive{% endif %}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Messages:</strong> {{ session.message_count }}</p>
+                                    {% if session.last_message_at %}
+                                        <p><strong>Last Activity:</strong> {{ session.last_message_at|date:"F j, Y H:i" }}</p>
+                                    {% endif %}
+                                    {% if session.quiz %}
+                                        <p><strong>Linked Quiz:</strong> {{ session.quiz.title }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash me-2"></i>Yes, Delete Session
+                            </button>
+                            <a href="{% url 'chat_sessions' %}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
