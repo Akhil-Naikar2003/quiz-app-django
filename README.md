@@ -126,76 +126,9 @@ QuizAnalytics (1:1 with Quiz)
 - MySQL 8.0+
 - Virtual environment
 
-### **Setup Instructions**
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/quiz-app.git
-cd quiz-app
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure environment variables
-cp .env.example .env
-# Edit .env with your database and API credentials
-
-# Run migrations
-python manage.py makemigrations
-python manage.py migrate
-
-# Create superuser
-python manage.py createsuperuser
-
-# Run the development server
-python manage.py runserver
-```
-
-### **Environment Variables**
-```bash
-# Database Configuration
-DATABASE_URL=mysql://user:password@localhost:3306/quiz_db
-
-# AI API Keys
-GROQ_API_KEY=your_groq_api_key
-
-# Django Settings
-SECRET_KEY=your_django_secret_key
-DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1
-```
-
-## 🚀 **Deployment**
-
-### **Production Deployment**
-```bash
-# Install production dependencies
-pip install gunicorn whitenoise
-
-# Collect static files
-python manage.py collectstatic
-
-# Run with Gunicorn
-gunicorn quiz_project.wsgi:application --bind 0.0.0.0:8000
-```
-
-### **Docker Support**
-```dockerfile
-FROM python:3.9-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-EXPOSE 8000
-CMD ["gunicorn", "quiz_project.wsgi:application", "--bind", "0.0.0.0:8000"]
-```
 
 ## 📈 **Performance & Scalability**
 
-- **Query Optimization**: Strategic indexing reduces query time by **60%**
 - **Efficient Joins**: Select_related operations minimize database hits
 - **Data Integrity**: Foreign key constraints ensure referential integrity
 - **Scalability**: Normalized schema supports high-volume operations
@@ -211,22 +144,7 @@ CMD ["gunicorn", "quiz_project.wsgi:application", "--bind", "0.0.0.0:8000"]
 - **Data Encryption**: Sensitive data encryption at rest
 - **Access Control**: Row-level security through user-based filtering
 
-## 🧪 **Testing & Quality Assurance**
 
-```bash
-# Run database tests
-python manage.py test quiz_app.tests.test_models
-python manage.py test quiz_app.tests.test_views
-
-# Database migration testing
-python manage.py makemigrations --check
-python manage.py migrate --plan
-
-# Code quality checks
-flake8 quiz_app/
-black quiz_app/
-isort quiz_app/
-```
 
 ## 📚 **API Endpoints**
 
@@ -262,7 +180,7 @@ isort quiz_app/
 
 ## 📄 **License**
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License .
 
 ## 🙏 **Acknowledgments**
 
@@ -277,7 +195,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Multi-language Support**: Internationalization for global users
 - **Advanced Analytics**: Machine learning insights and predictions
-- **Mobile App**: Native iOS and Android applications
 - **Real-time Collaboration**: Multi-user quiz sessions
 - **Advanced AI Models**: Integration with GPT-4 and Claude
 
